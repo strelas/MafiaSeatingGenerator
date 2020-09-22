@@ -3,6 +3,7 @@ import entity.AllRoundsSeating
 import entity.Player
 import java.io.File
 import java.io.FileReader
+import java.io.FileWriter
 
 fun main(args: Array<String>) {
     if(args.isEmpty()) {
@@ -12,7 +13,11 @@ fun main(args: Array<String>) {
     try {
         val fileReader = FileReader(File(args[0]))
         val json = Gson().fromJson<Array<Player>>(fileReader.readText(), Array<Player>::class.java)
-        println(AllRoundsSeating(11, json.toList().sortedBy { it.nick }))
+        val output = File("output.txt")
+        output.createNewFile()
+        val writer = FileWriter(output)
+        writer.write(AllRoundsSeating(11, json.toList().sortedBy { it.nick }).toString())
+        writer.close()
     } catch (e: Exception) {
         e.printStackTrace()
     }
