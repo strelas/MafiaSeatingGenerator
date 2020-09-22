@@ -52,7 +52,7 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
         while(true) {
             flag = false
             for (i in 0 until numberOfRounds) {
-                val r = decreaseMeetingRating(i)
+                val r = decreaseCrossedRating(i)
                 if(r.first) {
                     rounds[i] = rounds[i].map{
                         TableSeating(it.referee, it.players.map { p ->
@@ -76,29 +76,18 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
         rounds.add(round)
     }
 
-    private fun decreaseMeetingRating(index: Int): Pair<Boolean, Pair<Player, Player>?> {
+    private fun decreaseCrossedRating(index: Int): Pair<Boolean, Pair<Player, Player>?> {
         val oldRating = crossed.ratingOfCrossing()
-        for (toReplase in oldRating.second) {
-            for (player in players) {
+        for (toReplaseI in players.indices) {
+            for (playerI in toReplaseI + 1 until players.size) {
+                val toReplase = players[toReplaseI]
+                val player = players[playerI]
                 if(toReplase == player) continue
                 if(toReplase.skill!=player.skill) continue
+                //if(toReplase.region!=player.region) continue
                 val a = rounds[index].indexOfFirst { it.players.contains(toReplase) }
                 val b = rounds[index].indexOfFirst { it.players.contains(player) }
                 if(a==b) continue
-                if(a<0 || b<0) {
-                    val c = arrayListOf<Player>()
-                    rounds[index].forEach {
-                        it.players.forEach { p ->
-                            c.add(p)
-                        }
-                    }
-                    c.forEach { p->
-                        if(c.count { p1->
-                            p==p1
-                        }>1) println(p)
-                    }
-                    println("wtf")
-                }
                 if(!(rounds[index][a].playerCanPlayThere(player, toReplase) && rounds[index][b].playerCanPlayThere(toReplase, player))) continue
                 crossed.changeRound(index, toReplase, player)
                 val newRating = crossed.ratingOfCrossing()
@@ -120,8 +109,11 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
     private fun distributePlayers(): List<TableSeating> {
         val result = arrayListOf<TableSeating>()
         val tables = Array(players.size/10) { arrayListOf<Player>() }
+        val shuffledNumbers = Array(players.size/10) {
+            it
+        }.toList().shuffled()
         getInlinePlayers().forEachIndexed { index, player ->
-            tables[index%(players.size/10)].add(player)
+            tables[shuffledNumbers[index%(players.size/10)]].add(player)
         }
         tables.forEachIndexed { index, arrayList ->
             result.add(TableSeating("${index+1}", arrayList.shuffled().toTypedArray()))

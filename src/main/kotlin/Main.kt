@@ -12,9 +12,8 @@ fun main(args: Array<String>) {
     try {
         val fileReader = FileReader(File(args[0]))
         val json = Gson().fromJson<Array<Player>>(fileReader.readText(), Array<Player>::class.java)
-        println(AllRoundsSeating(11, json.toList()))
+        println(AllRoundsSeating(11, json.toList().sortedBy { it.nick }))
     } catch (e: Exception) {
-        println("Cannot read file")
         e.printStackTrace()
     }
 }

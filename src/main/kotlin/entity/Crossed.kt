@@ -20,7 +20,7 @@ class Crossed constructor(private val players: List<Player>){
         return  result
     }
 
-    var crossedArray = Array(players.size) {
+    private var crossedArray = Array(players.size) {
         Array(players.size) {
             0
         }
@@ -97,7 +97,7 @@ class Crossed constructor(private val players: List<Player>){
                     min = min(min, crossedArray[a][b])
                 }
             }
-            if(min == 0) min-=4*multiply
+            if(min == 0) min-=multiply
             if(result < max-min) {
                 result = max-min
                 count = 1
