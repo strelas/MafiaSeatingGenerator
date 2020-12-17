@@ -15,8 +15,9 @@ fun main(args: Array<String>) {
         val json = Gson().fromJson<Array<Player>>(fileReader.readText(), Array<Player>::class.java)
         val output = File("output.txt")
         output.createNewFile()
+        val seating = AllRoundsSeating(10, json.toList().sortedBy { it.nick })
         val writer = FileWriter(output)
-        writer.write(AllRoundsSeating(11, json.toList().sortedBy { it.nick }).toString())
+        writer.write(seating.toString())
         writer.close()
     } catch (e: Exception) {
         e.printStackTrace()

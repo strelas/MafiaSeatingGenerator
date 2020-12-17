@@ -1,9 +1,14 @@
 package entity
 
+import java.lang.Exception
+
 class AllRoundsSeating constructor(private val numberOfRounds: Int, private val players: List<Player>) {
-    private val rounds = arrayListOf<List<TableSeating>>()
+    private val rounds
+        get() = crossed.rounds
     private var splittedPlayers: List<List<List<Player>>>
     private var crossed = Crossed(players)
+    val rating: Pair<Int, Int>
+        get() = crossed.ratingOfCrossing().first
 
     override fun toString(): String {
         var result = ""
@@ -19,6 +24,10 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
         result += "\n${playersString()}\n"
         result += "\n$crossed"
         return result
+    }
+
+    fun generateCsvForMWT() {
+        throw Exception()
     }
 
     private fun playersString(): String {
@@ -52,17 +61,7 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
         while(true) {
             flag = false
             for (i in 0 until numberOfRounds) {
-                val r = decreaseCrossedRating(i)
-                if(r.first) {
-                    rounds[i] = rounds[i].map{
-                        TableSeating(it.referee, it.players.map { p ->
-                            if(p==r.second!!.first) r.second!!.second
-                            else if(p==r.second!!.second) r.second!!.first
-                            else p
-                        }.toTypedArray())
-                    }
-                }
-                flag = flag || r.first
+                flag = flag || decreaseCrossedRating(i)
             }
             if(!flag) break
         }
@@ -76,7 +75,11 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
         rounds.add(round)
     }
 
-    private fun decreaseCrossedRating(index: Int): Pair<Boolean, Pair<Player, Player>?> {
+    private fun decreaseTableRating(index: Int) {
+
+    }
+
+    private fun decreaseCrossedRating(index: Int): Boolean {
         val oldRating = crossed.ratingOfCrossing()
         for (toReplaseI in players.indices) {
             for (playerI in toReplaseI + 1 until players.size) {
@@ -89,21 +92,21 @@ class AllRoundsSeating constructor(private val numberOfRounds: Int, private val 
                 val b = rounds[index].indexOfFirst { it.players.contains(player) }
                 if(a==b) continue
                 if(!(rounds[index][a].playerCanPlayThere(player, toReplase) && rounds[index][b].playerCanPlayThere(toReplase, player))) continue
-                crossed.changeRound(index, toReplase, player)
+                crossed.swapPlayers(index, toReplase, player)
                 val newRating = crossed.ratingOfCrossing()
                 if(newRating.first.first < oldRating.first.first) {
                     println("newRating: ${newRating.first.first}.${newRating.first.second}")
-                    return Pair(true, Pair(toReplase, player))
+                    return true
                 }
                 if(newRating.first.first == oldRating.first.first && newRating.first.second < oldRating.first.second) {
                     println("newRating: ${newRating.first.first}.${newRating.first.second}")
-                    return Pair(true, Pair(toReplase, player))
+                    return true
                 }
-                crossed.changeRound(index, toReplase, player)
+                crossed.swapPlayers(index, toReplase, player)
 
             }
         }
-        return Pair(false, null)
+        return false
     }
 
     private fun distributePlayers(): List<TableSeating> {

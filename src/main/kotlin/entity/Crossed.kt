@@ -12,7 +12,6 @@ class Crossed constructor(private val players: List<Player>){
             result+=player.nick + "\n"
             for (another in players) {
                 if(another==player) continue
-                val cross = getCross(player, another)
                 result+="${another.nick} = ${getCross(player, another)};\n"
             }
             result += "\n"
@@ -40,7 +39,12 @@ class Crossed constructor(private val players: List<Player>){
         }
     }
 
-    fun changeRound(index: Int, p1: Player, p2: Player) {
+    fun swapTables(index: Int, t1: Int, t2: Int) {
+        val table1 = rounds[index][t1]
+
+    }
+
+    fun swapPlayers(index: Int, p1: Player, p2: Player) {
         val t1 = rounds[index].find { it.players.contains(p1) }
         val t2 = rounds[index].find { it.players.contains(p2) }
         if(t1==null) {
@@ -72,9 +76,11 @@ class Crossed constructor(private val players: List<Player>){
         }
         rounds[index] = rounds[index].map{
             TableSeating(it.referee, it.players.map { p ->
-                if(p==p2) p1
-                else if(p==p1) p2
-                else p
+                when (p) {
+                    p2 -> p1
+                    p1 -> p2
+                    else -> p
+                }
             }.toTypedArray())
         }
     }
@@ -112,7 +118,7 @@ class Crossed constructor(private val players: List<Player>){
         return Pair(Pair(result, count), list)
     }
 
-    fun getCross(player1: Player, player2: Player): Int {
+    private fun getCross(player1: Player, player2: Player): Int {
         val a = players.indexOf(player1)
         val b = players.indexOf(player2)
         return crossedArray[a][b]
