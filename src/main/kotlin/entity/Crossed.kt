@@ -90,7 +90,7 @@ class Crossed constructor(private val players: List<Player>){
         var count = 0
         val list = arrayListOf<Player>()
         for (player in players) {
-            var multiply = 1
+            var zeros = 0
             var max = 0
             var min = Int.MAX_VALUE
             for (anotherPlayer in players) {
@@ -98,12 +98,12 @@ class Crossed constructor(private val players: List<Player>){
                 if(player.canPlayTogetherWith(anotherPlayer)) {
                     val a = players.indexOf(player)
                     val b = players.indexOf(anotherPlayer)
-                    if(min == 0 && crossedArray[a][b]==0) multiply ++
+                    if(min == 0 && crossedArray[a][b]==0) zeros ++
                     max = max(max, crossedArray[a][b])
                     min = min(min, crossedArray[a][b])
                 }
             }
-            if(min == 0) min-=multiply
+            if(min == 0) min-=4*zeros
             if(result < max-min) {
                 result = max-min
                 count = 1

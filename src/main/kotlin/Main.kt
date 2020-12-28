@@ -6,16 +6,17 @@ import java.io.FileReader
 import java.io.FileWriter
 
 fun main(args: Array<String>) {
-    if(args.isEmpty()) {
+    if(args.none { !it.startsWith("--") }) {
         print("cannot find path of json file")
         return
     }
     try {
-        val fileReader = FileReader(File(args[0]))
+        val fileReader = FileReader(File(args.filter { !it.startsWith("--") }[0]))
         val json = Gson().fromJson<Array<Player>>(fileReader.readText(), Array<Player>::class.java)
         val output = File("output.txt")
         output.createNewFile()
-        val seating = AllRoundsSeating(10, json.toList().sortedBy { it.nick })
+        val seating = AllRoundsSeating(10, json.toList().sortedBy { it.nick }, args.contains("--simple"))
+        seating.generateCsvForMWT(File("forMWT.csv"))
         val writer = FileWriter(output)
         writer.write(seating.toString())
         writer.close()
