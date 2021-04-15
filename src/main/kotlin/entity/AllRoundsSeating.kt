@@ -27,6 +27,15 @@ class AllRoundsSeating constructor(
                 result += "\n"
             }
         }
+        for (i in rounds[0].indices) {
+            for (j in rounds.indices) {
+                result += "Игра ${j+1}, стол ${rounds[j][i].referee}.\n"
+                rounds[j][i].players.forEachIndexed { k, player ->
+                    result += "${k + 1}: $player\n"
+                }
+                result += "\n"
+            }
+        }
         result += "\n${playersString()}\n"
         result += "\n$crossed"
         return result
