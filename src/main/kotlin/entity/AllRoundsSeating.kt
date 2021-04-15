@@ -38,7 +38,7 @@ class AllRoundsSeating constructor(
         for (round in rounds) {
             for (i in 0..9) {
                 for (j in round.indices) {
-                    result += round[j].players[i].nick
+                    result += round[j].players[i].fiimNick
                     if (j != round.lastIndex) result += ";"
                 }
                 result += "\n"

@@ -1,6 +1,6 @@
 package entity
 
-data class Player constructor(val nick: String, val region: String, val skill: Int, val cannotMeet: Array<String>) {
+data class Player constructor(val nick: String, val region: String, val skill: Int, val cannotMeet: Array<String>, val fiimNick: String) {
     fun canPlayTogetherWith(another: Player): Boolean {
         return !(cannotMeet.map { it.toLowerCase() }.contains(another.nick.toLowerCase()) || another.cannotMeet.map { it.toLowerCase() }.contains(nick))
     }
