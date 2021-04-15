@@ -6,7 +6,7 @@ data class Player constructor(val nick: String, val region: String, val skill: I
     }
 
     override fun toString(): String {
-        return "$nick (skill: $skill, region: $region)"
+        return nick
     }
 
     override fun equals(other: Any?): Boolean {
